@@ -1,0 +1,6 @@
+numpy==1.21.2
+soundfile==0.10.3.post1
+wavio==0.0.4
+sounddevice==0.4.3
+statistics==1.0.3.5
+

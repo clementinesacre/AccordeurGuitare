@@ -1,5 +1,5 @@
 import math
-from accords_guitare import guitar_tunings
+from AccordeurGuitare import accords_guitare
 
 
 # prend une fréquence en paramètre et renvoie la note correcte la plus proche de cette fréquence
@@ -9,7 +9,7 @@ def get_closest_note(instrument_pitch):
 
     # noms des différentes notes
     string_notes = [
-    "A", "A#", "B ", "C ", "C#", "D ", "D#", "E ", "F ", "F#", "G ", "G#"
+        "A", "A#", "B ", "C ", "C#", "D ", "D#", "E ", "F ", "F#", "G ", "G#"
     ]
 
     # index de la note la plus proche de la fréquence d'entrée pour le tableau de noms
@@ -56,16 +56,16 @@ def get_target_note(instrument_pitch, tune="standard"):
     # à partir des fréquences de l'accordage standard et de la différence en tons
     for i in range(6):
         guitar_tuning_pitches.append(
-            guitar_tunings["standard_indexes"][i] - (
-                guitar_tunings["standard_indexes"][i] - 
-                round(
-                    guitar_tunings["standard_indexes"][i] * 2 ** (guitar_tunings[tune][i][1] / 12), 2
-                )
+            accords_guitare.guitar_tunings["standard_indexes"][i] - (
+                    accords_guitare.guitar_tunings["standard_indexes"][i] -
+                    round(
+                        accords_guitare.guitar_tunings["standard_indexes"][i] * 2 ** (accords_guitare.guitar_tunings[tune][i][1] / 12), 2
+                    )
             )
         )
 
     # fonction de comparaison
-    absolute_difference_function = lambda list_value : abs(list_value - instrument_pitch)
+    absolute_difference_function = lambda list_value: abs(list_value - instrument_pitch)
 
     # recherche de la fréquence la plus proche de la fréquence d'entrée
     # on compare donc la fréquence d'entrée aux fréquences de l'accord sélectionné
@@ -83,8 +83,8 @@ def get_target_note(instrument_pitch, tune="standard"):
     string_target_note = target_note + str(target_octave)
 
     return {
-        "target_note_string": string_target_note, 
-        "target_octave": target_octave, 
+        "target_note_string": string_target_note,
+        "target_octave": target_octave,
         "target_frequency": target_frequency
     }
 
