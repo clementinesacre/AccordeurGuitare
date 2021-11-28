@@ -59,7 +59,8 @@ def get_target_note(instrument_pitch, tune="standard"):
             accords_guitare.guitar_tunings["standard_indexes"][i] - (
                     accords_guitare.guitar_tunings["standard_indexes"][i] -
                     round(
-                        accords_guitare.guitar_tunings["standard_indexes"][i] * 2 ** (accords_guitare.guitar_tunings[tune][i][1] / 12), 2
+                        accords_guitare.guitar_tunings["standard_indexes"][i] * 2 ** (
+                                accords_guitare.guitar_tunings[tune][i][1] / 12), 2
                     )
             )
         )

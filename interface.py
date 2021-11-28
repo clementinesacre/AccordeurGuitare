@@ -7,54 +7,63 @@ from AccordeurGuitare import main
 widthCanvas = 1200
 heightCanvas = 100
 freqRef = 0
-limit = 3 #1200/3 = 400hz ==> max
+limit = 3  # 1200/3 = 400hz ==> max
 
 """
-Enregistrer en choisisant manuellement la note à atteindre
+Record manually
 """
+
+
 def chooseNote(freq):
     global limit
-    
+
     dict = main.getFrenquencies()
     targetFreq = freq
     actualFrequency = dict["freqActu"]
-    print("frequence a atteindre manuellement : ", targetFreq)
-    print("frequence actuelle : ", actualFrequency)
+    print("frequency to reach manually : ", targetFreq)
+    print("actual frequency : ", actualFrequency)
     print('-----------------------------')
     scale.changeScale(targetFreq)
-    limit = widthCanvas/(targetFreq*2)
+    limit = widthCanvas / (targetFreq * 2)
     pointer.changeTargetF(actualFrequency)
-    root.after_idle(move) 
+    root.after_idle(move)
+
 
 """
-Enregistrer en trouvant automatiquement la note à atteindre
+Record automatically
 """
+
+
 def startRecord():
     global limit
-    
+
     dict = main.getFrenquencies()
     targetFreq = dict["target_frequency"]
     actualFrequency = dict["freqActu"]
-    print("frequence a atteindre automatiquement : ", targetFreq)
-    print("frequence actuelle : ", actualFrequency)
+    print("Frequency to reach automatically : ", targetFreq)
+    print("Actual Frequency : ", actualFrequency)
     print('-----------------------------')
     scale.changeScale(targetFreq)
-    limit = widthCanvas/(targetFreq*2)
+    limit = widthCanvas / (targetFreq * 2)
     pointer.changeTargetF(actualFrequency)
-    root.after_idle(move) 
+    root.after_idle(move)
 
 
 """
-Faire bouger l'aiguille
+Move the cursor
 """
+
+
 def move():
     pointer.move()
     root.after(10, move)
 
 
 """
-Classe représentant l'échelle (avec les fréquences/tons affichés selon ce qui est choisi)
+Class for the scale (with frequencies and tone chosen)
 """
+
+
 class Scale:
     def __init__(self, canvas):
         self.canvas = canvas
@@ -63,43 +72,48 @@ class Scale:
         self.center = 'G#'
         self.minCanvas = canvas.create_text(widthCanvas - 20, 20, text=self.min, fill="blue", font='Helvetica 15 bold')
         self.maxCanvas = canvas.create_text(10, 20, text=self.max, fill="blue", font='Helvetica 15 bold')
-        self.centerCanvas = canvas.create_text(widthCanvas / 2, 20, text=self.center, fill="blue", font='Helvetica 15 bold')
+        self.centerCanvas = canvas.create_text(widthCanvas / 2, 20, text=self.center, fill="blue",
+                                               font='Helvetica 15 bold')
 
     def changeScale(self, center):
         self.center = center
         self.canvas.itemconfig(self.centerCanvas, text=center)
 
+
 """
-Classe représentant l'aiguille qui se déplace pour afficher la bonne fréquence
+Class of the cursor moving to the right frequency
 """
+
+
 class Pointer:
     def __init__(self, canvas):
         self.canvas = canvas
-        self.pos_x1 = widthCanvas/2
+        self.pos_x1 = widthCanvas / 2
         self.pos_y1 = 50
-        self.taille = 50
+        self.size = 50
         self.target_freq = 0
         self.step = 5
-        self.rectangle = self.canvas.create_rectangle(self.pos_x1, self.pos_y1, self.pos_x1 + self.taille,self.pos_y1 + self.taille, fill="red", outline='blue')
+        self.rectangle = self.canvas.create_rectangle(self.pos_x1, self.pos_y1, self.pos_x1 + self.size,
+                                                      self.pos_y1 + self.size, fill="red", outline='blue')
         self.canvas.pack()
 
     def move(self):
-        #print(" POS : " ,self.pos_x1, "  Limite : ",self.target_freq)
-        liste = []
-        for i in range(-self.step+1, self.step) :
-            liste.append(self.pos_x1 + i)
+        # print(" POS : " ,self.pos_x1, "  Limit : ",self.target_freq)
+        listE = []
+        for i in range(-self.step + 1, self.step):
+            listE.append(self.pos_x1 + i)
 
-        if self.pos_x1 >= widthCanvas - self.taille or self.pos_x1 <= 0:
-           pass
-        elif self.target_freq in liste :
-            #print("egal")
+        if self.pos_x1 >= widthCanvas - self.size or self.pos_x1 <= 0:
             pass
-        elif self.target_freq > self.pos_x1 :
-            #print("plus grand")
+        elif self.target_freq in listE:
+            # print("equal")
+            pass
+        elif self.target_freq > self.pos_x1:
+            # print("greater")
             self.canvas.move(self.rectangle, self.step, 0)
             self.pos_x1 += self.step
-        elif self.target_freq < self.pos_x1 :
-            #print("plus petit")
+        elif self.target_freq < self.pos_x1:
+            # print("smaller")
             self.canvas.move(self.rectangle, -self.step, 0)
             self.pos_x1 -= self.step
 
@@ -108,10 +122,10 @@ class Pointer:
 
 
 root = tk.Tk()
-root.title('Accordeur guitare')
+root.title('Guitar Tuner')
 root.geometry('1200x800+50+50')
 
-buttonSave = ttk.Button(root, text="Enregistrer", command=lambda: startRecord())
+buttonSave = ttk.Button(root, text="Record", command=lambda: startRecord())
 buttonSave.pack(ipadx=5, ipady=5, expand=True)
 
 buttonNote1 = ttk.Button(root, text="E", command=lambda: chooseNote(82.41))
@@ -132,6 +146,7 @@ canvas = Canvas(master=root, bg="black", width=widthCanvas, height=heightCanvas)
 scale = Scale(canvas)
 pointer = Pointer(canvas)
 
-# root.after_idle(generateRand) # after_idle est appelé quand il n'y a plus d'événements à traiter dans la boucle principale ; # Appelé qu'une fois
+# root.after_idle(generateRand) # after_idle est appelé quand il n'y a plus d'événements à traiter dans la boucle
+# principale ; # Appelé qu'une fois
 
 root.mainloop()

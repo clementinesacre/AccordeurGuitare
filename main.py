@@ -1,8 +1,6 @@
 import sounddevice as sd
-from numpy.fft import fft, ifft, rfft
-import numpy
+from numpy.fft import rfft
 import soundfile
-from matplotlib import pylab
 from numpy import argmax
 import wavio as wv
 import statistics
@@ -41,5 +39,6 @@ def getFrenquencies():
     dico = find_note.get_target_note(frequency)
     dico["freqActu"] = frequency
     return dico
+
 
 getFrenquencies()
