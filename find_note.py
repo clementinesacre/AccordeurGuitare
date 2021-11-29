@@ -83,7 +83,19 @@ def get_target_note(instrument_pitch, tune="standard"):
     target_octave = 4 + (target_pitch_index + 9) // 12
     string_target_note = target_note + str(target_octave)
 
+    if guitar_tuning_pitches.index(target_frequency) == 0:
+        lower_note = "lowest"
+        higher_note = accords_guitare.guitar_tunings[tune][guitar_tuning_pitches.index(target_frequency) + 1][0]
+    elif guitar_tuning_pitches.index(target_frequency) == 5:
+        lower_note = accords_guitare.guitar_tunings[tune][guitar_tuning_pitches.index(target_frequency) - 1][0]
+        higher_note = "highest"
+    else:
+        lower_note = accords_guitare.guitar_tunings[tune][guitar_tuning_pitches.index(target_frequency) - 1][0]
+        higher_note = accords_guitare.guitar_tunings[tune][guitar_tuning_pitches.index(target_frequency) + 1][0]
+
     return {
+        "lower_note": lower_note,
+        "higher_note": higher_note,
         "target_note_string": string_target_note,
         "target_octave": target_octave,
         "target_frequency": target_frequency

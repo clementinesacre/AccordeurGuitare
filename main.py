@@ -32,13 +32,10 @@ def getFrenquencies():
     # true_i = parabolic(log(abs(f)), i)[0]
 
     frequency = argmax(abs(rfft(audio_samples - statistics.mean(audio_samples)))) / dureeEnregistrement
-    print("reponse v1 : ", Fs * i / len(windowed))  # même valeur que le i au dessus
+    #print("reponse v1 : ", Fs * i / len(windowed))  # même valeur que le i au dessus
     print("reponse v2 : ", frequency)
 
     print("Votre note est : ", find_note.get_target_note(frequency))
     dico = find_note.get_target_note(frequency)
     dico["freqActu"] = frequency
     return dico
-
-
-getFrenquencies()
