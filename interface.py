@@ -2,7 +2,12 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import *
 from AccordeurGuitare import main
+from PIL import ImageTk, Image
+import itertools
 
+buttonColor = "#9d9d9d"
+widthInterface = 1200
+heightInterface = 800
 widthCanvas = 1200
 heightCanvas = 100
 freqRef = 0
@@ -71,9 +76,9 @@ class Scale:
         self.lower = ""
         self.higher = ""
         self.center = ""
-        self.maxCanvas = canvas.create_text(widthCanvas - 35, 20, text=self.lower, fill="blue", font='Helvetica 15')
-        self.minCanvas = canvas.create_text(35, 20, text=self.higher, fill="blue", font='Helvetica 15')
-        self.centerCanvas = canvas.create_text(widthCanvas / 2, 20, text=self.center, fill="blue",
+        self.maxCanvas = canvas.create_text(widthCanvas - 35, 20, text=self.lower, fill="#26ff34", font='Helvetica 15')
+        self.minCanvas = canvas.create_text(35, 20, text=self.higher, fill="#26ff34", font='Helvetica 15')
+        self.centerCanvas = canvas.create_text(widthCanvas / 2, 20, text=self.center, fill="#26ff34",
                                                font='Helvetica 15')
 
     def changeScale(self, center, lower="lower", higher="higher"):
@@ -99,7 +104,7 @@ class Pointer:
         self.target_freq = 0
         self.step = 5
         self.rectangle = self.canvas.create_rectangle(self.pos_x1, self.pos_y1, self.pos_x1 + 2,
-                                                      self.pos_y1 + self.size, fill="red", outline='blue')
+                                                      self.pos_y1 + self.size, fill="red", outline='red')
         self.canvas.pack()
 
     def move(self):
@@ -128,24 +133,45 @@ class Pointer:
 root = tk.Tk()
 root.title('Guitar Tuner')
 root.geometry('1200x800+50+50')
+bg = ImageTk.PhotoImage(file="GuitarHead.jpg")
 
-buttonSave = ttk.Button(root, text="Record", command=lambda: startRecord())
+canvas = Canvas(root, width=700, height=600, bg="#0b0c0c")
+canvas.pack(fill=BOTH, expand=True)
+canvas.create_image(320, 0, image=bg, anchor='nw')
+
+buttonSave = tk.Button(root, text="Record", bg=buttonColor, width="6", command=lambda: startRecord())
 buttonSave.pack(ipadx=5, ipady=5, expand=True)
+buttonSave.place(x=20, y=30)
 
-buttonNote1 = ttk.Button(root, text="E", command=lambda: chooseNote(82.41))
+buttonSave = tk.Button(root, text="Tunings", bg=buttonColor, width="6")
+buttonSave.pack(ipadx=5, ipady=5, expand=True)
+buttonSave.place(x=20, y=100)
+
+buttonNote1 = tk.Button(root, bg=buttonColor, width="6", text="E", command=lambda: chooseNote(82.41))
 buttonNote1.pack(ipadx=5, ipady=5, expand=True)
-buttonNote2 = ttk.Button(root, text="A", command=lambda: chooseNote(110.00))
-buttonNote2.pack(ipadx=5, ipady=5, expand=True)
-buttonNote3 = ttk.Button(root, text="D", command=lambda: chooseNote(146.83))
-buttonNote3.pack(ipadx=5, ipady=5, expand=True)
-buttonNote4 = ttk.Button(root, text="G", command=lambda: chooseNote(196.00))
-buttonNote4.pack(ipadx=5, ipady=5, expand=True)
-buttonNote5 = ttk.Button(root, text="B", command=lambda: chooseNote(246.93))
-buttonNote5.pack(ipadx=5, ipady=5, expand=True)
-buttonNote6 = ttk.Button(root, text="E", command=lambda: chooseNote(329.63))
-buttonNote6.pack(ipadx=5, ipady=5, expand=True)
+buttonNote1.place(x=355, y=470)
 
-canvas = Canvas(master=root, bg="black", width=widthCanvas, height=heightCanvas)
+buttonNote2 = tk.Button(root, bg=buttonColor, width="6", text="A", command=lambda: chooseNote(110.00))
+buttonNote2.pack(ipadx=5, ipady=5, expand=True)
+buttonNote2.place(x=375, y=400)
+
+buttonNote3 = tk.Button(root, bg=buttonColor, width="6", text="D", command=lambda: chooseNote(146.83))
+buttonNote3.pack(ipadx=5, ipady=5, expand=True)
+buttonNote3.place(x=395, y=325)
+
+buttonNote4 = tk.Button(root, bg=buttonColor, width="6", text="G", command=lambda: chooseNote(196.00))
+buttonNote4.pack(ipadx=5, ipady=5, expand=True)
+buttonNote4.place(x=415, y=250)
+
+buttonNote5 = tk.Button(root, bg=buttonColor, width="6", text="B", command=lambda: chooseNote(246.93))
+buttonNote5.pack(ipadx=5, ipady=5, expand=True)
+buttonNote5.place(x=440, y=175)
+
+buttonNote6 = tk.Button(root, bg=buttonColor, width="6", text="E", command=lambda: chooseNote(329.63))
+buttonNote6.pack(ipadx=5, ipady=5, expand=True)
+buttonNote6.place(x=460, y=100)
+
+canvas = Canvas(master=root, bg="#000000", width=widthCanvas, height=heightCanvas)
 
 scale = Scale(canvas)
 pointer = Pointer(canvas)
