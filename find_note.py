@@ -1,59 +1,71 @@
 import math
-from AccordeurGuitare import accords_guitare
+import accords_guitare
+
+# reference pitch
+A4_pitch = 440
+# names of the different notes
+string_notes = [
+    "A", "A#", "B ", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"
+]
 
 
-# prend une fréquence en paramètre et renvoie la note correcte la plus proche de cette fréquence
+# return the closest correct note for a given frequency (given as an argument)
 def get_closest_note(instrument_pitch):
-    # fréquence de référence
-    A4_pitch = 440
-
-    # noms des différentes notes
-    string_notes = [
-        "A", "A#", "B ", "C ", "C#", "D ", "D#", "E ", "F ", "F#", "G ", "G#"
-    ]
-
-    # index de la note la plus proche de la fréquence d'entrée pour le tableau de noms
-    pitch_index = int(
-        round(
-            math.log(instrument_pitch / A4_pitch, 2) * 12
-        )
-    )
-
-    # numéro de l'octave dans laquelle se trouve la note la plus proche
-    octave_number = 4 + (pitch_index + 9) // 12
+    # get the octave number
+    octave_number = get_octave_number(instrument_pitch)
+    # get the pitch index of the closest correct note
+    pitch_index = get_pitch_index(instrument_pitch)
     simple_note = string_notes[pitch_index % 12]
 
-    # création de la note en texte
-    closest_note = simple_note + str(octave_number)
+    # create the closest not in string format
+    closest_note = simple_note + octave_number
 
-    # 
-    closest_pitch = round(A4_pitch * 2 ** (pitch_index / 12), 1)
+    # calculate the closest note frequency from the pitch_index
+    closest_pitch = round(A4_pitch * 2 ** (pitch_index / 12), 2)
 
-    return pitch_index
+    return closest_note, closest_pitch
 
 
-# trouve la note dont laquelle il faut se rapprocher
+"""
+Function searches the closest matching frequency from a given guitar tune and a 
+given input frequency.
+It then returns that frequency and the given guitar tune's frequency and string 
+representations of notes.
+"""
 def get_target_note(instrument_pitch, tune="standard"):
-    # fréquence de référence
-    A4_pitch = 440
+    # comparison function
+    absolute_difference_function = lambda list_value: abs(list_value - instrument_pitch)
 
-    # ce tableau va contenir les fréquences de l'accordage choisi
+    # searching the closest matching value to the input frequency
+    target_frequency = min(find_tuning_frequencies(tune), key=absolute_difference_function)
+
+    # index of the target note relative the reference pitch (A4)
+    target_pitch_index = get_pitch_index(target_frequency)
+
+    target_note = string_notes[target_pitch_index % 12]
+    target_octave = 4 + (target_pitch_index + 9) // 12
+    string_target_note = target_note + str(target_octave)
+
+    return {
+        "target_note_string": string_target_note,
+        "target_octave": target_octave,
+        "target_frequency": target_frequency,
+        "guitar_tune_frequecies": guitar_tune_frequencies(tune)
+    }
+
+
+"""
+Function finds the frequencies of all the notes of a same tuning set.
+It does so with help from the tone difference relative to the standard tuning.
+"""
+def find_tuning_frequencies(tune="standard"):
     guitar_tuning_pitches = []
 
-    # noms des différentes notes
-    string_notes = [
-        "A", "A#", "B ", "C ", "C#", "D ", "D#", "E ", "F ", "F#", "G ", "G#"
-    ]
-
-    # index de la note la plus proche de la fréquence d'entrée pour le tableau de noms
-    pitch_index = int(
-        round(
-            math.log(instrument_pitch / A4_pitch, 2) * 12
-        )
-    )
-
-    # on calcule les fréquences des cordes de l'accordage sélectionné
-    # à partir des fréquences de l'accordage standard et de la différence en tons
+    # For each note of the tuning set, calculate (from the tone difference relative to
+    # the standard tuning set) the frequency difference with the standard tunings set's 
+    # frequencies.
+    # Then substract that difference from the standard tune's frequency in order
+    # to obtain the frequency of the searched tuning set's note
     for i in range(6):
         guitar_tuning_pitches.append(
             accords_guitare.guitar_tunings["standard_indexes"][i] - (
@@ -65,29 +77,44 @@ def get_target_note(instrument_pitch, tune="standard"):
             )
         )
 
-    # fonction de comparaison
-    absolute_difference_function = lambda list_value: abs(list_value - instrument_pitch)
+    return guitar_tuning_pitches
 
-    # recherche de la fréquence la plus proche de la fréquence d'entrée
-    # on compare donc la fréquence d'entrée aux fréquences de l'accord sélectionné
-    target_frequency = min(guitar_tuning_pitches, key=absolute_difference_function)
 
-    # numéro de l'octave dans laquelle se trouve la note la plus proche
-    target_pitch_index = int(
+"""
+Function returns a list with a given tuning set's string notes and frequencies
+"""
+def guitar_tune_frequencies(tune="standard"):
+    # get the searched tuning set
+    guitar_tune_frequencies = accords_guitare.guitar_tunings[tune]
+    # get the frequencies of that tuning set
+    guitar_tuning_pitches = find_tuning_frequencies(tune)
+
+    # replace the tone difference with the actual frequency
+    for i in range(6):
+        guitar_tune_frequencies[i] = (
+            guitar_tune_frequencies[i][0] + get_octave_number(guitar_tuning_pitches[i]),
+            guitar_tuning_pitches[i]
+        )
+
+    return guitar_tune_frequencies
+
+
+# returns the octave number of a given frequency
+def get_octave_number(frequency):
+    # returns the octave number of the pitch index relative to the reference pitch (A4)
+    return str(4 + (get_pitch_index(frequency) + 9) // 12)
+
+
+"""
+Function returns the pitch index relative to the reference pitch (A4)
+of the note that is closest to matching the given frequency.
+"""
+def get_pitch_index(frequency):
+    return int(
         round(
-            math.log(target_frequency / A4_pitch, 2) * 12
+            math.log(frequency / A4_pitch, 2) * 12
         )
     )
-
-    target_note = string_notes[target_pitch_index % 12]
-    target_octave = 4 + (target_pitch_index + 9) // 12
-    string_target_note = target_note + str(target_octave)
-
-    return {
-        "target_note_string": string_target_note,
-        "target_octave": target_octave,
-        "target_frequency": target_frequency
-    }
 
 
 if __name__ == "__main__":

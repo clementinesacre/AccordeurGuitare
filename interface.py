@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import *
 from random import *
-from AccordeurGuitare import main
+import main
 
 widthCanvas = 1200
 heightCanvas = 100

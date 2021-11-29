@@ -4,7 +4,7 @@ import soundfile
 from numpy import argmax
 import wavio as wv
 import statistics
-from AccordeurGuitare import find_note
+import find_note
 
 Fs = 44100
 dureeEnregistrement = 2
