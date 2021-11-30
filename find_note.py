@@ -87,8 +87,8 @@ def find_tuning_frequencies(tune="standard"):
 Function returns a list with a given tuning set's string notes and frequencies
 """
 def guitar_tune_frequencies(tune="standard"):
-    # get the searched tuning set
-    guitar_tune_frequencies = accords_guitare.guitar_tunings[tune]
+    # get a copy of the searched tuning set
+    guitar_tune_frequencies = accords_guitare.guitar_tunings[tune][:]
     # get the frequencies of that tuning set
     guitar_tuning_pitches = find_tuning_frequencies(tune)
 
@@ -141,4 +141,4 @@ def get_higher_lower(frequency, tune):
 
 
 if __name__ == "__main__":
-    print(get_target_note(200, "un_ton_plus_bas"))
+    print(get_target_note(196.0))

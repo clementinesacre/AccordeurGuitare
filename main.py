@@ -35,7 +35,7 @@ def getFrenquencies():
     #print("reponse v1 : ", Fs * i / len(windowed))  # même valeur que le i au dessus
     print("reponse v2 : ", frequency)
 
-    print("Votre note est : ", find_note.get_target_note(frequency))
     dico = find_note.get_target_note(frequency)
     dico["freqActu"] = frequency
+    print("Votre note est : ", dico)
     return dico
