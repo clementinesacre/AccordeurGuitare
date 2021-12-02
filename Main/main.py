@@ -38,6 +38,20 @@ def move():
 
 
 """
+Set all the dict for later usage
+"""
+
+
+def setTunings():
+    for t in accords_guitare.tunings_types:
+        if t != "un_ton_plus_bas":
+            name_tuning.append(t)
+            setting_tuning.append(accords_guitare.tunings_types[t])
+        else:
+            pass
+
+
+"""
 Class for the scale (with frequencies and tone chosen)
 """
 
@@ -165,20 +179,13 @@ class ButtonNotes:
         root.after_idle(move)
 
 
-def setTunings():
-    for t in accords_guitare.tunings_types:
-        if t != "un_ton_plus_bas":
-            name_tuning.append(t)
-            setting_tuning.append(accords_guitare.tunings_types[t])
-        else:
-            pass
-
-
 setTunings()
 root = Window()
 canvas = Canvas(master=root, bg="#000000", width=widthCanvas, height=heightCanvas)
 scale = Scale(canvas)
 pointer = Pointer(canvas)
+
+# attributing each object with its class
 
 buttonSave = ButtonRecord(root, "record", 20, 30, "6")
 
