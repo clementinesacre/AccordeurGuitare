@@ -175,16 +175,16 @@ def setTunings():
 
 
 setTunings()
-for e in range(len(name_tuning) + 1):
-    buttons.append("button" + str(e + 1))
-    buttons_note.append("button_note" + str(e + 1))
-
 root = Window()
 canvas = Canvas(master=root, bg="#000000", width=widthCanvas, height=heightCanvas)
 scale = Scale(canvas)
 pointer = Pointer(canvas)
 
 buttonSave = ButtonRecord(root, "record", 20, 30, "6")
+
+for e in range(len(name_tuning) + 1):
+    buttons.append("button" + str(e + 1))
+    buttons_note.append("button_note" + str(e + 1))
 
 for e in range(len(buttons) - 1):
     buttons[e] = ButtonTunings(root, name_tuning[e], 20, pos_button, "7")
