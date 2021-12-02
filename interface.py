@@ -145,7 +145,7 @@ class Window(tk.Tk):
         self.bg = ImageTk.PhotoImage(file="GuitarHead.jpg")
 
 
-class Button:
+class ButtonTunings:
     def __init__(self, master, text, pos_x, pos_y, width):
         self.color = buttonColor
         self.width = width
@@ -160,8 +160,42 @@ class Button:
         print(self.text)
 
 
+class ButtonRecord:
+    def __init__(self, master, text, pos_x, pos_y, width):
+        self.color = buttonColor
+        self.width = width
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.text = text
+        self.button = tk.Button(master, text=text, bg=self.color, command=startRecord, width=width)
+        self.button.pack(ipadx=5, ipady=5, expand=True)
+        self.button.place(x=pos_x, y=pos_y)
 
 
+class ButtonNotes:
+    def __init__(self, master, text, pos_x, pos_y, note, width):
+        self.color = buttonColor
+        self.note = note
+        self.width = width
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.text = text
+        self.button = tk.Button(master, text=text, bg=self.color, command=startRecord, width=width)
+        self.button.pack(ipadx=5, ipady=5, expand=True)
+        self.button.place(x=pos_x, y=pos_y)
+
+    def chooseNote(self, note):
+        global limit
+        dict = main.getFrenquencies()
+        targetFreq = note
+        actualFrequency = self.dict["freqActu"]
+        print("frequency to reach manually : ", targetFreq)
+        print("actual frequency : ", actualFrequency)
+        print('-----------------------------')
+        scale.changeScale(dict["target_note_string"])
+        limit = widthCanvas / (targetFreq * 2)
+        pointer.changeTargetF(actualFrequency)
+        root.after_idle(move)
 
 
 def setTunings():
@@ -169,38 +203,36 @@ def setTunings():
         if e != "un_ton_plus_bas":
             name_tuning.append(e)
             setting_tuning.append(accords_guitare.tunings_types[e])
-        else : pass
+        else:
+            pass
 
 
 setTunings()
 for e in range(len(name_tuning) + 1):
-    buttons.append("button" + str((e)+ 1))
+    buttons.append("button" + str(e + 1))
 for i in range(len(buttons)):
     print(buttons[i])
 
-
-
-# canvas.create_image(320, 0, image=bg, anchor='nw')
 root = Window()
-
 canvas = Canvas(master=root, bg="#000000", width=widthCanvas, height=heightCanvas)
 scale = Scale(canvas)
 pointer = Pointer(canvas)
 
-"""buttonSave = Button(root, "record", startRecord, 20, 30, "6")
+buttonSave = ButtonRecord(root, "record", 20, 30, "6")
 
-buttonTunings = Button(root, "Tunings", setTunings, 20, 100, "6")
-"""
-
-for e in range(len(buttons)-1):
-    buttons[e] = Button(root, name_tuning[e], 20, pos_button, "7")
+for e in range(len(buttons) - 1):
+    buttons[e] = ButtonTunings(root, name_tuning[e], 20, pos_button, "7")
     pos_button += 30
 
+buttonNotebis = ButtonNotes(root, "E", 20, 400, "82.41", "7")
 
-"""
+
+
 buttonNote1 = tk.Button(root, bg=buttonColor, width="6", text="E", command=lambda: chooseNote(82.41))
 buttonNote1.pack(ipadx=5, ipady=5, expand=True)
 buttonNote1.place(x=355, y=470)
+
+"""
 
 buttonNote2 = tk.Button(root, bg=buttonColor, width="6", text="A", command=lambda: chooseNote(110.00))
 buttonNote2.pack(ipadx=5, ipady=5, expand=True)
