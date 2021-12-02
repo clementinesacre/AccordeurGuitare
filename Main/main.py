@@ -19,10 +19,10 @@ def getFrenquencies():
     print('Fin enregistrement')
 
     # Ecriture du son dans un fichier wav
-    wv.write("test2.wav", recording, Fs, sampwidth=3)
+    wv.write("../test2.wav", recording, Fs, sampwidth=3)
 
     # Lecture du fichier wav et récupération de ses informations
-    audio_samples, sample_rate = soundfile.read("test2.wav", dtype="int16")
+    audio_samples, sample_rate = soundfile.read("../test2.wav", dtype="int16")
 
     # Compute Fourier transform of windowed signal
     windowed = audio_samples * len(audio_samples)
@@ -32,7 +32,7 @@ def getFrenquencies():
     # true_i = parabolic(log(abs(f)), i)[0]
 
     frequency = argmax(abs(rfft(audio_samples - statistics.mean(audio_samples)))) / dureeEnregistrement
-    #print("reponse v1 : ", Fs * i / len(windowed))  # même valeur que le i au dessus
+    # print("reponse v1 : ", Fs * i / len(windowed))  # même valeur que le i au dessus
     print("reponse v2 : ", frequency)
 
     dico = find_note.get_target_note(frequency)

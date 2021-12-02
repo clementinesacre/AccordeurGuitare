@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import *
 import main
 from PIL import ImageTk
-from AccordeurGuitare import accords_guitare
+from AccordeurGuitare.Main import accords_guitare
 
 buttonColor = "#9d9d9d"
 widthInterface = 1200
@@ -123,7 +123,7 @@ class Window(tk.Tk):
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
-        self.bg = ImageTk.PhotoImage(file="GuitarHead.jpg")
+        self.bg = ImageTk.PhotoImage(file="../Ressources/GuitarHead.jpg")
 
 
 class ButtonTunings:
