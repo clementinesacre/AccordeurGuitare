@@ -1,10 +1,8 @@
 import tkinter as tk
-from tkinter import ttk
 from tkinter import *
-from random import *
 import main
-from PIL import ImageTk, Image
-import itertools
+from PIL import ImageTk
+from AccordeurGuitare import accords_guitare
 
 buttonColor = "#9d9d9d"
 widthInterface = 1200
@@ -13,6 +11,11 @@ widthCanvas = 1200
 heightCanvas = 100
 freqRef = 0
 limit = 3  # 1200/3 = 400hz ==> max
+pos_button = 150
+
+name_tuning = []
+setting_tuning = []
+buttons = list()
 
 """
 Record manually
@@ -72,8 +75,8 @@ Class for the scale (with frequencies and tone chosen)
 
 
 class Scale:
-    def __init__(self, canvas):
-        self.canvas = canvas
+    def __init__(self, container):
+        self.canvas = container
         self.lower = ""
         self.higher = ""
         self.center = ""
@@ -97,8 +100,8 @@ Class of the cursor moving to the right frequency
 
 
 class Pointer:
-    def __init__(self, canvas):
-        self.canvas = canvas
+    def __init__(self, newCanvas):
+        self.canvas = newCanvas
         self.pos_x1 = (widthCanvas / 2)
         self.pos_y1 = 50
         self.size = 50
@@ -131,23 +134,70 @@ class Pointer:
         self.target_freq = int(newF * limit)
 
 
-root = tk.Tk()
-root.title('Guitar Tuner')
-root.geometry('1200x800+50+50')
-bg = ImageTk.PhotoImage(file="GuitarHead.jpg")
+class Window(tk.Tk):
+    def __init__(self, *args, **kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
+        self.wm_title("Guitar Tuner")
+        container = tk.Frame(self, height=800, width=1200)
+        container.pack(side="top", fill="both", expand=True)
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
+        self.bg = ImageTk.PhotoImage(file="GuitarHead.jpg")
 
-canvas = Canvas(root, width=700, height=600, bg="#0b0c0c")
-canvas.pack(fill=BOTH, expand=True)
-canvas.create_image(320, 0, image=bg, anchor='nw')
 
-buttonSave = tk.Button(root, text="Record", bg=buttonColor, width="6", command=lambda: startRecord())
-buttonSave.pack(ipadx=5, ipady=5, expand=True)
-buttonSave.place(x=20, y=30)
+class Button:
+    def __init__(self, master, text, pos_x, pos_y, width):
+        self.color = buttonColor
+        self.width = width
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.text = text
+        self.button = tk.Button(master, text=text, bg=self.color, command=self.showValue, width=width)
+        self.button.pack(ipadx=5, ipady=5, expand=True)
+        self.button.place(x=pos_x, y=pos_y)
 
-buttonSave = tk.Button(root, text="Tunings", bg=buttonColor, width="6")
-buttonSave.pack(ipadx=5, ipady=5, expand=True)
-buttonSave.place(x=20, y=100)
+    def showValue(self):
+        print(self.text)
 
+
+
+
+
+
+def setTunings():
+    for e in accords_guitare.tunings_types:
+        if e != "un_ton_plus_bas":
+            name_tuning.append(e)
+            setting_tuning.append(accords_guitare.tunings_types[e])
+        else : pass
+
+
+setTunings()
+for e in range(len(name_tuning) + 1):
+    buttons.append("button" + str((e)+ 1))
+for i in range(len(buttons)):
+    print(buttons[i])
+
+
+
+# canvas.create_image(320, 0, image=bg, anchor='nw')
+root = Window()
+
+canvas = Canvas(master=root, bg="#000000", width=widthCanvas, height=heightCanvas)
+scale = Scale(canvas)
+pointer = Pointer(canvas)
+
+"""buttonSave = Button(root, "record", startRecord, 20, 30, "6")
+
+buttonTunings = Button(root, "Tunings", setTunings, 20, 100, "6")
+"""
+
+for e in range(len(buttons)-1):
+    buttons[e] = Button(root, name_tuning[e], 20, pos_button, "7")
+    pos_button += 30
+
+
+"""
 buttonNote1 = tk.Button(root, bg=buttonColor, width="6", text="E", command=lambda: chooseNote(82.41))
 buttonNote1.pack(ipadx=5, ipady=5, expand=True)
 buttonNote1.place(x=355, y=470)
@@ -171,11 +221,7 @@ buttonNote5.place(x=440, y=175)
 buttonNote6 = tk.Button(root, bg=buttonColor, width="6", text="E", command=lambda: chooseNote(329.63))
 buttonNote6.pack(ipadx=5, ipady=5, expand=True)
 buttonNote6.place(x=460, y=100)
-
-canvas = Canvas(master=root, bg="#000000", width=widthCanvas, height=heightCanvas)
-
-scale = Scale(canvas)
-pointer = Pointer(canvas)
+"""
 
 # root.after_idle(generateRand) # after_idle est appelé quand il n'y a plus d'événements à traiter dans la boucle
 # principale ; # Appelé qu'une fois
