@@ -12,30 +12,11 @@ heightCanvas = 100
 freqRef = 0
 limit = 3  # 1200/3 = 400hz ==> max
 pos_button = 150
-
+pos_button_note = 400
 name_tuning = []
 setting_tuning = []
 buttons = list()
-
-"""
-Record manually
-"""
-
-
-def chooseNote(freq):
-    global limit
-
-    dict = main.getFrenquencies()
-    targetFreq = freq
-    actualFrequency = dict["freqActu"]
-    print("frequency to reach manually : ", targetFreq)
-    print("actual frequency : ", actualFrequency)
-    print('-----------------------------')
-    scale.changeScale(dict["target_note_string"])
-    limit = widthCanvas / (targetFreq * 2)
-    pointer.changeTargetF(actualFrequency)
-    root.after_idle(move)
-
+buttons_note = list()
 
 """
 Record automatically
@@ -45,15 +26,15 @@ Record automatically
 def startRecord():
     global limit
 
-    dict = main.getFrenquencies()
-    targetFreq = dict["target_frequency"]
-    actualFrequency = dict["freqActu"]
-    higher_note = dict["higher_note"]
-    lower_note = dict["lower_note"]
+    dictNote = main.getFrenquencies()
+    targetFreq = dictNote["target_frequency"]
+    actualFrequency = dictNote["freqActu"]
+    higher_note = dictNote["higher_note"]
+    lower_note = dictNote["lower_note"]
     print("Start : Frequency to reach automatically : ", targetFreq)
     print("Start : Actual Frequency : ", actualFrequency)
     print('-----------------------------')
-    scale.changeScale(dict["target_note_string"], lower_note, higher_note)
+    scale.changeScale(dictNote["target_note_string"], lower_note, higher_note)
     limit = widthCanvas / (targetFreq * 2)
     pointer.changeTargetF(actualFrequency)
     root.after_idle(move)
@@ -113,8 +94,8 @@ class Pointer:
 
     def move(self):
         listE = []
-        for i in range(-self.step + 1, self.step):
-            listE.append(self.pos_x1 + i)
+        for j in range(-self.step + 1, self.step):
+            listE.append(self.pos_x1 + j)
 
         if self.pos_x1 >= widthCanvas - self.size or self.pos_x1 <= 0:
             pass
@@ -180,36 +161,38 @@ class ButtonNotes:
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.text = text
-        self.button = tk.Button(master, text=text, bg=self.color, command=startRecord, width=width)
+        self.button = tk.Button(master, text=text, bg=self.color, command=self.chooseNote, width=width)
         self.button.pack(ipadx=5, ipady=5, expand=True)
         self.button.place(x=pos_x, y=pos_y)
 
-    def chooseNote(self, note):
+    def chooseNote(self):
         global limit
-        dict = main.getFrenquencies()
-        targetFreq = note
+        self.dict = main.getFrenquencies()
+        self.targetFreq = self.note
         actualFrequency = self.dict["freqActu"]
-        print("frequency to reach manually : ", targetFreq)
+        print("frequency to reach manually : ", self.targetFreq)
         print("actual frequency : ", actualFrequency)
         print('-----------------------------')
-        scale.changeScale(dict["target_note_string"])
-        limit = widthCanvas / (targetFreq * 2)
+        scale.changeScale(self.dict["target_note_string"])
+        limit = widthCanvas / (self.targetFreq * 2)
         pointer.changeTargetF(actualFrequency)
         root.after_idle(move)
 
 
 def setTunings():
-    for e in accords_guitare.tunings_types:
-        if e != "un_ton_plus_bas":
-            name_tuning.append(e)
-            setting_tuning.append(accords_guitare.tunings_types[e])
+    for t in accords_guitare.tunings_types:
+        if t != "un_ton_plus_bas":
+            name_tuning.append(t)
+            setting_tuning.append(accords_guitare.tunings_types[t])
         else:
             pass
 
 
 setTunings()
+print(setting_tuning)
 for e in range(len(name_tuning) + 1):
     buttons.append("button" + str(e + 1))
+    buttons_note.append("button_note" + str(e + 1))
 for i in range(len(buttons)):
     print(buttons[i])
 
@@ -224,38 +207,11 @@ for e in range(len(buttons) - 1):
     buttons[e] = ButtonTunings(root, name_tuning[e], 20, pos_button, "7")
     pos_button += 30
 
-buttonNotebis = ButtonNotes(root, "E", 20, 400, "82.41", "7")
+for b in range(6):
+    buttons_note[e] = ButtonNotes(root, setting_tuning[0][b], 20, pos_button_note,
+                                  accords_guitare.guitar_tunings["standard_indexes"][b], "7")
+    pos_button_note += 30
 
-
-
-buttonNote1 = tk.Button(root, bg=buttonColor, width="6", text="E", command=lambda: chooseNote(82.41))
-buttonNote1.pack(ipadx=5, ipady=5, expand=True)
-buttonNote1.place(x=355, y=470)
-
-"""
-
-buttonNote2 = tk.Button(root, bg=buttonColor, width="6", text="A", command=lambda: chooseNote(110.00))
-buttonNote2.pack(ipadx=5, ipady=5, expand=True)
-buttonNote2.place(x=375, y=400)
-
-buttonNote3 = tk.Button(root, bg=buttonColor, width="6", text="D", command=lambda: chooseNote(146.83))
-buttonNote3.pack(ipadx=5, ipady=5, expand=True)
-buttonNote3.place(x=395, y=325)
-
-buttonNote4 = tk.Button(root, bg=buttonColor, width="6", text="G", command=lambda: chooseNote(196.00))
-buttonNote4.pack(ipadx=5, ipady=5, expand=True)
-buttonNote4.place(x=415, y=250)
-
-buttonNote5 = tk.Button(root, bg=buttonColor, width="6", text="B", command=lambda: chooseNote(246.93))
-buttonNote5.pack(ipadx=5, ipady=5, expand=True)
-buttonNote5.place(x=440, y=175)
-
-buttonNote6 = tk.Button(root, bg=buttonColor, width="6", text="E", command=lambda: chooseNote(329.63))
-buttonNote6.pack(ipadx=5, ipady=5, expand=True)
-buttonNote6.place(x=460, y=100)
-"""
-
-# root.after_idle(generateRand) # after_idle est appelé quand il n'y a plus d'événements à traiter dans la boucle
-# principale ; # Appelé qu'une fois
+# main loop
 
 root.mainloop()
