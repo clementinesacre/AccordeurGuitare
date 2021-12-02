@@ -1,19 +1,20 @@
 import tkinter as tk
 from tkinter import *
-from AccordeurGuitare.Main import record
+import record
 from PIL import ImageTk
-from AccordeurGuitare.Main import accords_guitare
-from AccordeurGuitare.Main.variables import *
+import accords_guitare
+import find_note
+from variables import *
 
 """
 Record automatically
 """
 
 
-def startRecord():
+def startRecord(tune):
     global limit
 
-    dictNote = record.getFrequencies()
+    dictNote = record.getFrequencies(tune)
     targetFreq = dictNote["target_frequency"]
     actualFrequency = dictNote["freqActu"]
     higher_note = dictNote["higher_note"]
@@ -136,7 +137,15 @@ class ButtonTunings:
         self.button.place(x=pos_x, y=pos_y)
 
     def showValue(self):
-        print(self.text)
+        buttonSave.tune = self.text
+        tuning_pitches = find_note.guitar_tune_frequencies(self.text)
+        
+        for string in range(6):
+            buttons_note[string].setButton(
+                tuning_pitches[string][0], 
+                tuning_pitches[string][1]
+            )
+        
 
 
 class ButtonRecord:
@@ -146,9 +155,13 @@ class ButtonRecord:
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.text = text
-        self.button = tk.Button(master, text=text, bg=self.color, command=startRecord, width=width)
+        self.tune = "standard"
+        self.button = tk.Button(master, text=text, bg=self.color, command=self.__start_recording, width=width)
         self.button.pack(ipadx=5, ipady=5, expand=True)
         self.button.place(x=pos_x, y=pos_y)
+
+    def __start_recording(self):
+        startRecord(self.tune)
 
 
 class ButtonNotes:
@@ -167,17 +180,22 @@ class ButtonNotes:
 
     def chooseNote(self):
         global limit
-        self.dict = record.getFrequencies()
+        self.dict = record.getFrequencies(buttonSave.tune)
         self.targetFreq = self.note
         actualFrequency = self.dict["freqActu"]
         print("frequency to reach manually : ", self.targetFreq)
         print("actual frequency : ", actualFrequency)
         print('-----------------------------')
-        scale.changeScale(self.dict["target_note_string"])
+        scale.changeScale(self.text)
         limit = widthCanvas / (self.targetFreq * 2)
         pointer.changeTargetF(actualFrequency)
         root.after_idle(move)
 
+    def setButton(self, newText, newNote):
+        self.note = newNote
+        self.text = newText
+        self.button['text'] = newText
+        
 
 setTunings()
 root = Window()
@@ -191,17 +209,25 @@ buttonSave = ButtonRecord(root, "record", 20, 30, "6")
 
 for e in range(len(name_tuning) + 1):
     buttons.append("button" + str(e + 1))
-    buttons_note.append("button_note" + str(e + 1))
+    # buttons_note.append("button_note" + str(e + 1))
 
 for e in range(len(buttons) - 1):
     buttons[e] = ButtonTunings(root, name_tuning[e], 20, pos_button, "7")
     pos_button += 30
 
 for b in range(6):
-    buttons_note[e] = ButtonNotes(root, setting_tuning[0][b], 20, pos_button_note,
-                                  accords_guitare.guitar_tunings["standard_indexes"][b], "7")
+    buttons_note.append(ButtonNotes(
+        root, 
+        setting_tuning[0][b], 
+        20, 
+        pos_button_note,
+        accords_guitare.guitar_tunings["standard_indexes"][b],
+        "7"
+    ))
+
     pos_button_note += 30
 
+buttons[0].showValue()
 # main loop
 
 root.mainloop()

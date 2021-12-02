@@ -1,5 +1,5 @@
 import math
-from AccordeurGuitare.Main import accords_guitare
+import accords_guitare
 
 # reference pitch
 A4_pitch = 440
@@ -47,7 +47,8 @@ def get_target_note(instrument_pitch, tune="standard"):
     target_note = string_notes[target_pitch_index % 12]
     target_octave = 4 + (target_pitch_index + 9) // 12
     string_target_note = target_note + str(target_octave)
-    higher_lower = get_higher_lower(target_frequency, tune)
+    tune_frequencies = guitar_tune_frequencies(tune)
+    higher_lower = get_higher_lower(target_frequency, tune, tune_frequencies)
 
     return {
         "lower_note": higher_lower[0],
@@ -55,7 +56,7 @@ def get_target_note(instrument_pitch, tune="standard"):
         "target_note_string": string_target_note,
         "target_octave": target_octave,
         "target_frequency": target_frequency,
-        "guitar_tune_frequencies": guitar_tune_frequencies(tune)
+        "guitar_tune_frequencies": tune_frequencies
     }
 
 
@@ -128,23 +129,23 @@ def get_pitch_index(frequency):
     )
 
 
-def get_higher_lower(frequency, tune):
+def get_higher_lower(frequency, tune, guitar_tune_frequencies):
     guitar_tuning_pitches = find_tuning_frequencies(tune)
 
     if guitar_tuning_pitches.index(frequency) == 0:
         return (
             "lowest",
-            accords_guitare.guitar_tunings[tune][guitar_tuning_pitches.index(frequency) + 1][0]
+            guitar_tune_frequencies[guitar_tuning_pitches.index(frequency) + 1][0]
         )
     elif guitar_tuning_pitches.index(frequency) == 5:
         return (
-            accords_guitare.guitar_tunings[tune][guitar_tuning_pitches.index(frequency) - 1][0],
+            guitar_tune_frequencies[guitar_tuning_pitches.index(frequency) - 1][0],
             "highest"
         )
     else:
         return (
-            accords_guitare.guitar_tunings[tune][guitar_tuning_pitches.index(frequency) - 1][0],
-            accords_guitare.guitar_tunings[tune][guitar_tuning_pitches.index(frequency) + 1][0]
+            guitar_tune_frequencies[guitar_tuning_pitches.index(frequency) - 1][0],
+            guitar_tune_frequencies[guitar_tuning_pitches.index(frequency) + 1][0]
         )
 
 

@@ -4,7 +4,7 @@ import soundfile
 from numpy import argmax
 import wavio as wv
 import statistics
-from AccordeurGuitare.Main import find_note
+import find_note
 
 
 Fs = 44100
@@ -13,7 +13,7 @@ record_time = 2
 
 # Start recording
 
-def getFrequencies():
+def getFrequencies(tune):
     print('Recording')
     recording = sd.rec(int(record_time * Fs), samplerate=Fs, channels=1)
     sd.wait()
@@ -37,7 +37,7 @@ def getFrequencies():
     # print("result v1 : ", Fs * i / len(windowed))  # same value as previous "i"
     print("result v2 : ", frequency)
 
-    dict_freq = find_note.get_target_note(frequency)
+    dict_freq = find_note.get_target_note(frequency, tune)
     dict_freq["freqActu"] = frequency
     print("your note is : ", dict_freq)
     return dict_freq
