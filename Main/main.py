@@ -212,8 +212,8 @@ for e in range(len(name_tuning) + 1):
     # buttons_note.append("button_note" + str(e + 1))
 
 for e in range(len(buttons) - 1):
-    buttons[e] = ButtonTunings(root, name_tuning[e], 20, pos_button, "7")
-    pos_button += 30
+    buttons[e] = ButtonTunings(root, name_tuning[e], 20, pos_x_button, "7")
+    pos_x_button += 30
 
 for b in range(6):
     buttons_note.append(ButtonNotes(
