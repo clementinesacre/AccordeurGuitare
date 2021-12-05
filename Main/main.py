@@ -42,7 +42,7 @@ def startFunctionAutomatic():
     """
     global flag
     flag = not flag
-    
+
     t1 = Thread(target=automaticRecord)
     t2 = Thread(target=moveFrq)
     t1.start()
@@ -233,6 +233,11 @@ class ButtonTunings:
         self.button.place(x=pos_x, y=pos_y)
 
     def showValue(self):
+        for e in buttons:
+            e.setColor(buttonColor)
+
+        self.setColor('blue')
+
         buttonSave.tune = self.text
         tuning_pitches = find_note.guitar_tune_frequencies(self.text)
 
@@ -241,6 +246,11 @@ class ButtonTunings:
                 tuning_pitches[string][0],
                 tuning_pitches[string][1]
             )
+
+
+    def setColor(self, newColor):
+        self.color = newColor
+        self.button['bg'] = self.color
 
 
 class ButtonRecord:
@@ -318,12 +328,12 @@ pointer = Pointer(canvas)
 # attributing each object with its class
 
 buttonSave = ButtonRecord(root, "record", 20, 30, "6")
-for e in range(len(name_tuning) + 1):
-    buttons.append("button" + str(e + 1))
-    # buttons_note.append("button_note" + str(e + 1))
+# for e in range(len(name_tuning) + 1):
+#     buttons.append("button" + str(e + 1))
+#     # buttons_note.append("button_note" + str(e + 1))
 
-for e in range(len(buttons) - 1):
-    buttons[e] = ButtonTunings(root, name_tuning[e], 20, pos_x_button, "7")
+for e in range(len(name_tuning)):
+    buttons.append(ButtonTunings(root, name_tuning[e], 20, pos_x_button, "7"))
     pos_x_button += 30
 
 for b in range(6):
