@@ -33,12 +33,16 @@ def startRecord(tune):
     root.after_idle(move)
 """
 
+flag = False
 
 def startFunctionAutomatic():
     """
     Manage multithreading, by running the function that reaches a note automatically,
     and then the function that moves the cursor.
     """
+    global flag
+    flag = not flag
+    
     t1 = Thread(target=automaticRecord)
     t2 = Thread(target=moveFrq)
     t1.start()
@@ -71,12 +75,8 @@ def callbackAutomatic(indata, frames, time, status):
 def automaticRecord():
     """Record by automatically finding the note to reach."""
     with sd.InputStream(channels=1, callback=callbackAutomatic, blocksize=int(size_sample), samplerate=fs):
-        flag = True
         while flag:
-            try:
-                time.sleep(1)
-            except KeyboardInterrupt:
-                exit()
+            time.sleep(1)
 
 
 def startFunctionManual(freq):
