@@ -122,7 +122,7 @@ class Window(tk.Tk):
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
-        self.bg = ImageTk.PhotoImage(file="../Resources/GuitarHead.jpg")
+        #self.bg = ImageTk.PhotoImage(file="../Resources/GuitarHead.jpg")
 
 
 class ButtonTunings:
