@@ -11,3 +11,6 @@ name_tuning = []
 setting_tuning = []
 buttons = list()
 buttons_note = list()
+fs = 2000
+size_sample = 2000
+flag = False

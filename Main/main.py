@@ -1,16 +1,21 @@
 import tkinter as tk
 from tkinter import *
-from AccordeurGuitare.Main import record
 from PIL import ImageTk
 from AccordeurGuitare.Main import accords_guitare
 from AccordeurGuitare.Main import find_note
 from AccordeurGuitare.Main.variables import *
+import time
+from threading import *
+import numpy as np
+from numpy.fft import rfft
+from numpy import argmax
+import sounddevice as sd
 
 """
 Record automatically
 """
 
-
+"""
 def startRecord(tune):
     global limit
 
@@ -26,6 +31,93 @@ def startRecord(tune):
     limit = widthCanvas / (targetFreq * 2)
     pointer.changeTargetF(actualFrequency)
     root.after_idle(move)
+"""
+
+
+def startFunctionAutomatic():
+    """
+    Manage multithreading, by running the function that reaches a note automatically,
+    and then the function that moves the cursor.
+    """
+    t1 = Thread(target=automaticRecord)
+    #t2 = Thread(target=moveFrq)
+    t1.start()
+    #t2.start()
+
+
+def callbackAutomatic(indata, frames, time, status):
+    """Callback function of the function that records by automatically finding the note to reach."""
+    global limit
+
+    if status:
+        print(status)
+    if any(indata[:, 0]):
+        frequence = argmax(abs(rfft(indata[:, 0] - np.mean(indata[:, 0]))))
+        dico = find_note.get_target_note(frequence)
+        targetFreq = dico["target_frequency"]
+
+        values.change(frequence, targetFreq)
+        scale.changeScale(targetFreq)
+        limit = widthCanvas / (targetFreq * 2)
+        pointer.changeTargetF(frequence)
+
+        print("frequence a atteindre automatiquement : ", targetFreq)
+        print("frequence actuelle : ", frequence)
+        print('-----------------------------')
+    else:
+        print('No input')
+
+
+def automaticRecord():
+    """Record by automatically finding the note to reach."""
+    with sd.InputStream(channels=1, callback=callbackAutomatic, blocksize=int(size_sample), samplerate=fs):
+        flag = True
+        while flag:
+            print("ok")
+            time.sleep(1)
+
+
+def startFunctionManual(freq):
+    """
+    Manage multithreading, running the function that reaches a manually chosen note, and then the function
+    that moves the cursor.
+    """
+    global freqRef
+    freqRef = freq
+
+    t1 = Thread(target=manualRecord)
+    t2 = Thread(target=moveFrq)
+    t1.start()
+    t2.start()
+
+
+def callbackManual(indata, frames, time, status):
+    """Callback function of the function that records by finding manually the note to reach."""
+    global limit
+
+    if status:
+        print(status)
+    if any(indata[:, 0]):
+        frequence = argmax(abs(rfft(indata[:, 0] - np.mean(indata[:, 0]))))
+        targetFreq = freqRef
+
+        values.change(frequence, targetFreq)
+        scale.changeScale(targetFreq)
+        limit = widthCanvas / (targetFreq * 2)
+        pointer.changeTargetF(frequence)
+
+        print("frequence a atteindre automatiquement : ", targetFreq)
+        print("frequence actuelle : ", frequence)
+        print('-----------------------------')
+    else:
+        print('No input')
+
+
+def manualRecord():
+    """Record by manually choosing the note to reach."""
+    with sd.InputStream(channels=1, callback=callbackManual, blocksize=int(size_sample), samplerate=fs):
+        while True:
+            time.sleep(0.01)
 
 
 """
@@ -33,9 +125,11 @@ Move the cursor
 """
 
 
-def move():
-    pointer.move()
-    root.after(10, move)
+def moveFrq():
+    """Move the pointer."""
+    while True:
+        pointer.move()
+        time.sleep(0.01)
 
 
 """
@@ -122,7 +216,7 @@ class Window(tk.Tk):
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
-        #self.bg = ImageTk.PhotoImage(file="../Resources/GuitarHead.jpg")
+        # self.bg = ImageTk.PhotoImage(file="../Resources/GuitarHead.jpg")
 
 
 class ButtonTunings:
@@ -155,12 +249,9 @@ class ButtonRecord:
         self.pos_y = pos_y
         self.text = text
         self.tune = "standard"
-        self.button = tk.Button(master, text=text, bg=self.color, command=self.__start_recording, width=width)
+        self.button = tk.Button(master, text=text, bg=self.color, command=automaticRecord, width=width)
         self.button.pack(ipadx=5, ipady=5, expand=True)
         self.button.place(x=pos_x, y=pos_y)
-
-    def __start_recording(self):
-        startRecord(self.tune)
 
 
 class ButtonNotes:
@@ -178,17 +269,7 @@ class ButtonNotes:
         self.button.place(x=pos_x, y=pos_y)
 
     def chooseNote(self):
-        global limit
-        self.dict = record.getFrequencies(buttonSave.tune)
-        self.targetFreq = self.note
-        actualFrequency = self.dict["freqActu"]
-        print("frequency to reach manually : ", self.targetFreq)
-        print("actual frequency : ", actualFrequency)
-        print('-----------------------------')
-        scale.changeScale(self.text)
-        limit = widthCanvas / (self.targetFreq * 2)
-        pointer.changeTargetF(actualFrequency)
-        root.after_idle(move)
+        startFunctionManual(self.note)
 
     def setButton(self, newText, newNote):
         self.note = newNote
@@ -196,16 +277,45 @@ class ButtonNotes:
         self.button['text'] = newText
 
 
+class Values:
+    """Text boxes displaying the current frequency and the frequency to be reached."""
+
+    def __init__(self, canvas2):
+        self.canvas = canvas2
+        self.canvas.pack()
+
+        self.actualText = 0
+        self.targetText = 0
+
+        self.actualCanvas = Canvas(self.canvas, width=100, height=30, bg="yellow")
+        self.actualCanvas.pack()
+        self.actualFrequency = self.actualCanvas.create_text(50, 20, text=self.actualText, fill="red",
+                                                             font='Helvetica 15 bold')
+
+        self.targetCanvas = Canvas(self.canvas, width=100, height=30, bg="blue")
+        self.targetCanvas.pack()
+        self.targetFrequency = self.targetCanvas.create_text(50, 20, text=self.targetText, fill="red",
+                                                             font='Helvetica 15 bold')
+
+    def change(self, actual, target):
+        """Change the values of the displayed frequencies."""
+        self.actualText = actual
+        self.targetText = target
+        self.actualCanvas.itemconfig(self.actualFrequency, text=self.actualText)
+        self.targetCanvas.itemconfig(self.targetFrequency, text=self.targetText)
+
+
 setTunings()
 root = Window()
 canvas = Canvas(master=root, bg="#000000", width=widthCanvas, height=heightCanvas)
+canvasValue = Canvas(master=root, bg="purple", width=widthCanvas, height=heightCanvas)
 scale = Scale(canvas)
+values = Values(canvasValue)
 pointer = Pointer(canvas)
 
 # attributing each object with its class
 
 buttonSave = ButtonRecord(root, "record", 20, 30, "6")
-
 for e in range(len(name_tuning) + 1):
     buttons.append("button" + str(e + 1))
     # buttons_note.append("button_note" + str(e + 1))
@@ -229,4 +339,6 @@ for b in range(6):
 buttons[0].showValue()
 # main loop
 
-root.mainloop()
+
+if __name__ == "__main__":
+    root.mainloop()
