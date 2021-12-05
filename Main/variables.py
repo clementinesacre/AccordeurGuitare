@@ -4,6 +4,7 @@ heightInterface = 800
 widthCanvas = 1200
 heightCanvas = 100
 freqRef = 0
+centeredNote = "X"
 limit = 3  # 1200/3 = 400hz ==> max
 pos_x_button = 150
 pos_button_note = 400

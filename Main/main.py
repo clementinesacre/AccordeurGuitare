@@ -47,8 +47,13 @@ def startFunctionAutomatic():
     global flag2
     flag = not flag
     flag2 = False
+
     if flag:
         buttonSave.changeParam("Stop", "red")
+
+        for button in buttons_note:
+            button.setColor(buttonColor)
+
     else:
         buttonSave.changeParam("Start", "green")
     t1 = Thread(target=automaticRecord)
@@ -69,7 +74,11 @@ def callbackAutomatic(indata, frames, time, status):
         targetFreq = dico["target_frequency"]
 
         values.change(frequence, targetFreq)
-        scale.changeScale(targetFreq)
+        scale.changeScale(
+            dico["target_note_string"], 
+            dico["lower_note"], 
+            dico["higher_note"]
+        )
         limit = widthCanvas / (targetFreq * 2)
         pointer.changeTargetF(frequence)
 
@@ -84,21 +93,22 @@ def automaticRecord():
     """Record by automatically finding the note to reach."""
     with sd.InputStream(channels=1, callback=callbackAutomatic, blocksize=int(size_sample), samplerate=fs):
         while flag:
-            print("auto")
-            time.sleep(1)
+            time.sleep(0.05)
 
 
-def startFunctionManual(freq):
+def startFunctionManual(freq, noteText):
     """
     Manage multithreading, running the function that reaches a manually chosen note, and then the function
     that moves the cursor.
     """
     global freqRef
+    global centeredNote
     global flag
     global flag2
     flag = False
     flag2 = not flag2
     freqRef = freq
+    centeredNote = noteText
 
     t1 = Thread(target=manualRecord)
     t2 = Thread(target=moveFrq)
@@ -117,11 +127,11 @@ def callbackManual(indata, frames, time, status):
         targetFreq = freqRef
 
         values.change(frequence, targetFreq)
-        scale.changeScale(targetFreq)
+        scale.changeScale(centeredNote)
         limit = widthCanvas / (targetFreq * 2)
         pointer.changeTargetF(frequence)
 
-        print("frequence a atteindre automatiquement : ", targetFreq)
+        print("frequence a atteindre manuellement : ", targetFreq)
         print("frequence actuelle : ", frequence)
         print('-----------------------------')
     else:
@@ -132,8 +142,7 @@ def manualRecord():
     """Record by manually choosing the note to reach."""
     with sd.InputStream(channels=1, callback=callbackManual, blocksize=int(size_sample), samplerate=fs):
         while flag2:
-            print("manual")
-            time.sleep(0.01)
+            time.sleep(0.05)
 
 
 """
@@ -304,8 +313,8 @@ class ButtonNotes:
             self.setColor(buttonColor)
         else:
             self.setColor('blue')
-            
-        startFunctionManual(self.note)
+
+        startFunctionManual(self.note, self.text)
 
 
     def setButton(self, newText, newNote):
