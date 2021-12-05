@@ -1,9 +1,12 @@
 import tkinter as tk
 from tkinter import *
 from PIL import ImageTk
-import accords_guitare
-import find_note
-from variables import *
+from AccordeurGuitare.Main import accords_guitare
+from AccordeurGuitare.Main import find_note
+from AccordeurGuitare.Main.variables import *
+# import accords_guitare
+# import find_note
+# from variables import *
 import time
 from threading import *
 import numpy as np
@@ -33,7 +36,7 @@ def startRecord(tune):
     root.after_idle(move)
 """
 
-flag = False
+
 
 def startFunctionAutomatic():
     """
@@ -41,8 +44,13 @@ def startFunctionAutomatic():
     and then the function that moves the cursor.
     """
     global flag
+    global flag2
     flag = not flag
-
+    flag2 = False
+    if flag:
+        buttonSave.changeParam("Stop", "red")
+    else:
+        buttonSave.changeParam("Start", "green")
     t1 = Thread(target=automaticRecord)
     t2 = Thread(target=moveFrq)
     t1.start()
@@ -76,6 +84,7 @@ def automaticRecord():
     """Record by automatically finding the note to reach."""
     with sd.InputStream(channels=1, callback=callbackAutomatic, blocksize=int(size_sample), samplerate=fs):
         while flag:
+            print("auto")
             time.sleep(1)
 
 
@@ -85,6 +94,10 @@ def startFunctionManual(freq):
     that moves the cursor.
     """
     global freqRef
+    global flag
+    global flag2
+    flag = False
+    flag2 = not flag2
     freqRef = freq
 
     t1 = Thread(target=manualRecord)
@@ -118,7 +131,8 @@ def callbackManual(indata, frames, time, status):
 def manualRecord():
     """Record by manually choosing the note to reach."""
     with sd.InputStream(channels=1, callback=callbackManual, blocksize=int(size_sample), samplerate=fs):
-        while True:
+        while flag2:
+            print("manual")
             time.sleep(0.01)
 
 
@@ -247,7 +261,6 @@ class ButtonTunings:
                 tuning_pitches[string][1]
             )
 
-
     def setColor(self, newColor):
         self.color = newColor
         self.button['bg'] = self.color
@@ -255,7 +268,7 @@ class ButtonTunings:
 
 class ButtonRecord:
     def __init__(self, master, text, pos_x, pos_y, width):
-        self.color = buttonColor
+        self.color = "green"
         self.width = width
         self.pos_x = pos_x
         self.pos_y = pos_y
@@ -264,6 +277,10 @@ class ButtonRecord:
         self.button = tk.Button(master, text=text, bg=self.color, command=lambda: startFunctionAutomatic(), width=width)
         self.button.pack(ipadx=5, ipady=5, expand=True)
         self.button.place(x=pos_x, y=pos_y)
+
+    def changeParam(self, newText, newColor):
+        self.button['text'] = newText
+        self.button['bg'] = newColor
 
 
 class ButtonNotes:
@@ -281,12 +298,18 @@ class ButtonNotes:
         self.button.place(x=pos_x, y=pos_y)
 
     def chooseNote(self):
+        if flag2:
+            buttonSave.changeParam("Start", "green")
+        else:
+            pass
         startFunctionManual(self.note)
+
 
     def setButton(self, newText, newNote):
         self.note = newNote
         self.text = newText
         self.button['text'] = newText
+
 
 
 class Values:

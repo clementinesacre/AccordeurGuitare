@@ -14,3 +14,4 @@ buttons_note = list()
 fs = 2000
 size_sample = 2000
 flag = False
+flag2 = False
