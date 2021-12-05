@@ -70,7 +70,7 @@ def callbackAutomatic(indata, frames, time, status):
         print(status)
     if any(indata[:, 0]):
         frequence = argmax(abs(rfft(indata[:, 0] - np.mean(indata[:, 0]))))
-        dico = find_note.get_target_note(frequence)
+        dico = find_note.get_target_note(frequence, selectedTune)
         targetFreq = dico["target_frequency"]
 
         values.change(frequence, targetFreq)
@@ -256,6 +256,8 @@ class ButtonTunings:
         self.button.place(x=pos_x, y=pos_y)
 
     def showValue(self):
+        global selectedTune
+        selectedTune = self.text
         for e in buttons:
             e.setColor(buttonColor)
 
