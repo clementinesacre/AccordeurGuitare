@@ -45,17 +45,28 @@ def startFunctionAutomatic():
     """
     global flag
     global flag2
+
+    # toggle the automatic flag
     flag = not flag
+
+    # stop the manual thread
     flag2 = False
 
+    # if the automatic recorder thread is going to start
     if flag:
+        # change the start button to a stop button
         buttonSave.changeParam("Stop", "red")
 
+        # make sure all the other buttons are not highlighted
         for button in buttons_note:
             button.setColor(buttonColor)
+            button.selected = False
 
     else:
+        # change stop button to start button
         buttonSave.changeParam("Start", "green")
+
+    # start all needed threads
     t1 = Thread(target=automaticRecord)
     t2 = Thread(target=moveFrq)
     t1.start()
@@ -93,7 +104,7 @@ def automaticRecord():
     """Record by automatically finding the note to reach."""
     with sd.InputStream(channels=1, callback=callbackAutomatic, blocksize=int(size_sample), samplerate=fs):
         while flag:
-            time.sleep(0.05)
+            time.sleep(0.01)
 
 
 def startFunctionManual(freq, noteText):
@@ -105,11 +116,18 @@ def startFunctionManual(freq, noteText):
     global centeredNote
     global flag
     global flag2
+
+    # stop the automatic thread
     flag = False
+
+    # toggle the manual thread state
     flag2 = not flag2
     freqRef = freq
+
+    # set the target note var to the text of the clicked button
     centeredNote = noteText
 
+    # start all needed threads
     t1 = Thread(target=manualRecord)
     t2 = Thread(target=moveFrq)
     t1.start()
@@ -142,12 +160,7 @@ def manualRecord():
     """Record by manually choosing the note to reach."""
     with sd.InputStream(channels=1, callback=callbackManual, blocksize=int(size_sample), samplerate=fs):
         while flag2:
-            time.sleep(0.05)
-
-
-"""
-Move the cursor
-"""
+            time.sleep(0.01)
 
 
 def moveFrq():
@@ -157,12 +170,10 @@ def moveFrq():
         time.sleep(0.01)
 
 
-"""
-Set all the dict for later usage
-"""
-
-
 def setTunings():
+    """
+    Set all the dict for later usage
+    """
     for t in accords_guitare.tunings_types:
         if t != "un_ton_plus_bas":
             name_tuning.append(t)
@@ -171,12 +182,10 @@ def setTunings():
             pass
 
 
-"""
-Class for the scale (with frequencies and tone chosen)
-"""
-
-
 class Scale:
+    """
+    Class for the scale (with frequencies and tone chosen)
+    """
     def __init__(self, container):
         self.canvas = container
         self.lower = ""
@@ -196,12 +205,10 @@ class Scale:
         self.canvas.itemconfig(self.maxCanvas, text=higher)
 
 
-"""
-Class of the cursor moving to the right frequency
-"""
-
-
 class Pointer:
+    """
+    Class of the cursor moving to the right frequency
+    """
     def __init__(self, newCanvas):
         self.canvas = newCanvas
         self.pos_x1 = (widthCanvas / 2)
@@ -218,6 +225,7 @@ class Pointer:
         for j in range(-self.step + 1, self.step):
             listE.append(self.pos_x1 + j)
 
+        # if the pointer is at one end and il wants to go further to that same end...
         if (
             (
                 (self.pos_x1 >= widthCanvas - self.size) and 
@@ -227,6 +235,7 @@ class Pointer:
                 self.target_freq < self.pos_x1
             )
         ):
+            # ...do nothing
             pass
         elif self.target_freq in listE:
             pass
@@ -265,15 +274,21 @@ class ButtonTunings:
 
     def showValue(self):
         global selectedTune
+
+        # set the selected tune to a new value
         selectedTune = self.text
+
+        # reset all the tune buttons color
         for e in buttons:
             e.setColor(buttonColor)
 
+        # highlight the clicked button
         self.setColor('blue')
 
         buttonSave.tune = self.text
         tuning_pitches = find_note.guitar_tune_frequencies(self.text)
 
+        # change the text inside the note selector buttons
         for string in range(6):
             buttons_note[string].setButton(
                 tuning_pitches[string][0],
@@ -305,6 +320,7 @@ class ButtonRecord:
 class ButtonNotes:
     def __init__(self, master, text, pos_x, pos_y, note, width):
         self.color = buttonColor
+        self.selected = False
         self.dict = ()
         self.targetFreq = 0
         self.note = note
@@ -317,21 +333,42 @@ class ButtonNotes:
         self.button.place(x=pos_x, y=pos_y)
 
     def chooseNote(self):
+        global flag2
         buttonSave.changeParam("Start", "green")
 
-        if flag2:
+        # if the button is selected (meaning the user wants to unselect it)...
+        if self.selected:
+            self.selected = False
+
+            # stop the record
+            flag2 = False
+
+            # ...reset its color
             self.setColor(buttonColor)
         else:
-            self.setColor('blue')
+            flag2 = False
 
-        startFunctionManual(self.note, self.text)
+            for button in buttons_note:
+                button.setColor(buttonColor)
+                button.selected = False
+
+            # otherwise, highlight that button
+            self.setColor('blue')
+            startFunctionManual(self.note, self.text)
+            self.selected = True
+
 
 
     def setButton(self, newText, newNote):
+        global flag2
         self.note = newNote
         self.text = newText
         self.button['text'] = newText
+        print(self.selected)
 
+        if self.selected:
+            flag2 = False
+            startFunctionManual(self.note, self.text)
 
     def setColor(self, newColor):
         self.color = newColor
@@ -378,9 +415,6 @@ pointer = Pointer(canvas)
 # attributing each object with its class
 
 buttonSave = ButtonRecord(root, "record", 20, 30, "6")
-# for e in range(len(name_tuning) + 1):
-#     buttons.append("button" + str(e + 1))
-#     # buttons_note.append("button_note" + str(e + 1))
 
 for e in range(len(name_tuning)):
     buttons.append(ButtonTunings(root, name_tuning[e], 20, pos_x_button, "7"))
@@ -398,8 +432,8 @@ for b in range(6):
 
     pos_button_note += 30
 
+# highlight the standard tune button
 buttons[0].showValue()
-# main loop
 
 
 if __name__ == "__main__":

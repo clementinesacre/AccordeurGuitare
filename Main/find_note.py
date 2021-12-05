@@ -26,15 +26,13 @@ def get_closest_note(instrument_pitch):
     return closest_note, closest_pitch
 
 
-"""
-Function searches the closest matching frequency from a given guitar tune and a 
-given input frequency.
-It then returns that frequency and the given guitar tune's frequency and string 
-representations of notes.
-"""
-
-
 def get_target_note(instrument_pitch, tune="standard"):
+    """
+    Function searches the closest matching frequency from a given guitar tune and a 
+    given input frequency.
+    It then returns that frequency and the given guitar tune's frequency and string 
+    representations of notes.
+    """
     # comparison function
     absolute_difference_function = lambda list_value: abs(list_value - instrument_pitch)
 
@@ -60,13 +58,11 @@ def get_target_note(instrument_pitch, tune="standard"):
     }
 
 
-"""
-Function finds the frequencies of all the notes of a same tuning set.
-It does so with help from the tone difference relative to the standard tuning.
-"""
-
-
 def find_tuning_frequencies(tune="standard"):
+    """
+    Function finds the frequencies of all the notes of a same tuning set.
+    It does so with help from the tone difference relative to the standard tuning.
+    """
     guitar_tuning_pitches = []
 
     # For each note of the tuning set, calculate (from the tone difference relative to
@@ -88,12 +84,10 @@ def find_tuning_frequencies(tune="standard"):
     return guitar_tuning_pitches
 
 
-"""
-Function returns a list with a given tuning set's string notes and frequencies
-"""
-
-
 def guitar_tune_frequencies(tune="standard"):
+    """
+    Function returns a list with a given tuning set's string notes and frequencies
+    """
     # get a copy of the searched tuning set
     tune_frequencies = accords_guitare.guitar_tunings[tune][:]
     # get the frequencies of that tuning set
@@ -115,13 +109,11 @@ def get_octave_number(frequency):
     return str(4 + (get_pitch_index(frequency) + 9) // 12)
 
 
-"""
-Function returns the pitch index relative to the reference pitch (A4)
-of the note that is closest to matching the given frequency.
-"""
-
-
 def get_pitch_index(frequency):
+    """
+    Function returns the pitch index relative to the reference pitch (A4)
+    of the note that is closest to matching the given frequency.
+    """
     return int(
         round(
             math.log(frequency / A4_pitch, 2) * 12
@@ -130,6 +122,10 @@ def get_pitch_index(frequency):
 
 
 def get_higher_lower(frequency, tune, guitar_tune_frequencies):
+    """
+    Function returns the higher and lower text note of a frequency it got as
+    argument
+    """
     guitar_tuning_pitches = find_tuning_frequencies(tune)
 
     if guitar_tuning_pitches.index(frequency) == 0:

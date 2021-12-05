@@ -4,7 +4,7 @@ heightInterface = 800
 widthCanvas = 1200
 heightCanvas = 100
 freqRef = 0
-centeredNote = "X"
+centeredNote = "X"  # note that is centered on the scale
 limit = 3  # 1200/3 = 400hz ==> max
 pos_x_button = 150
 pos_button_note = 400
@@ -14,6 +14,6 @@ buttons = list()
 buttons_note = list()
 fs = 2000
 size_sample = 2000
-flag = False
-flag2 = False
+flag = False    # flag that controls the automatic recorder
+flag2 = False   # flag that controls the manual recorder
 selectedTune = "standard"
