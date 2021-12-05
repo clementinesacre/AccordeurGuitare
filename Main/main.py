@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import *
 from PIL import ImageTk
-from AccordeurGuitare.Main import accords_guitare
-from AccordeurGuitare.Main import find_note
-from AccordeurGuitare.Main.variables import *
+import accords_guitare
+import find_note
+from variables import *
 import time
 from threading import *
 import numpy as np
@@ -40,9 +40,9 @@ def startFunctionAutomatic():
     and then the function that moves the cursor.
     """
     t1 = Thread(target=automaticRecord)
-    #t2 = Thread(target=moveFrq)
+    t2 = Thread(target=moveFrq)
     t1.start()
-    #t2.start()
+    t2.start()
 
 
 def callbackAutomatic(indata, frames, time, status):
@@ -73,8 +73,10 @@ def automaticRecord():
     with sd.InputStream(channels=1, callback=callbackAutomatic, blocksize=int(size_sample), samplerate=fs):
         flag = True
         while flag:
-            print("ok")
-            time.sleep(1)
+            try:
+                time.sleep(1)
+            except KeyboardInterrupt:
+                exit()
 
 
 def startFunctionManual(freq):
@@ -249,7 +251,7 @@ class ButtonRecord:
         self.pos_y = pos_y
         self.text = text
         self.tune = "standard"
-        self.button = tk.Button(master, text=text, bg=self.color, command=automaticRecord, width=width)
+        self.button = tk.Button(master, text=text, bg=self.color, command=lambda: startFunctionAutomatic(), width=width)
         self.button.pack(ipadx=5, ipady=5, expand=True)
         self.button.place(x=pos_x, y=pos_y)
 
