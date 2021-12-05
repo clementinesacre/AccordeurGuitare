@@ -218,7 +218,15 @@ class Pointer:
         for j in range(-self.step + 1, self.step):
             listE.append(self.pos_x1 + j)
 
-        if self.pos_x1 >= widthCanvas - self.size or self.pos_x1 <= 0:
+        if (
+            (
+                (self.pos_x1 >= widthCanvas - self.size) and 
+                self.target_freq > self.pos_x1
+            ) or (
+                self.pos_x1 <= 0 and 
+                self.target_freq < self.pos_x1
+            )
+        ):
             pass
         elif self.target_freq in listE:
             pass
