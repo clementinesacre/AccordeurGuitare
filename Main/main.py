@@ -1,10 +1,10 @@
 import tkinter as tk
 from tkinter import *
-import record
+from AccordeurGuitare.Main import record
 from PIL import ImageTk
-import accords_guitare
-import find_note
-from variables import *
+from AccordeurGuitare.Main import accords_guitare
+from AccordeurGuitare.Main import find_note
+from AccordeurGuitare.Main.variables import *
 
 """
 Record automatically
@@ -139,13 +139,12 @@ class ButtonTunings:
     def showValue(self):
         buttonSave.tune = self.text
         tuning_pitches = find_note.guitar_tune_frequencies(self.text)
-        
+
         for string in range(6):
             buttons_note[string].setButton(
-                tuning_pitches[string][0], 
+                tuning_pitches[string][0],
                 tuning_pitches[string][1]
             )
-        
 
 
 class ButtonRecord:
@@ -195,7 +194,7 @@ class ButtonNotes:
         self.note = newNote
         self.text = newText
         self.button['text'] = newText
-        
+
 
 setTunings()
 root = Window()
@@ -217,9 +216,9 @@ for e in range(len(buttons) - 1):
 
 for b in range(6):
     buttons_note.append(ButtonNotes(
-        root, 
-        setting_tuning[0][b], 
-        20, 
+        root,
+        setting_tuning[0][b],
+        20,
         pos_button_note,
         accords_guitare.guitar_tunings["standard_indexes"][b],
         "7"
