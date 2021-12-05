@@ -14,6 +14,3 @@ tunings_types = {
     "open_do": ['C', 'G', 'C', 'C', 'G', 'C'],
     "drop_d": ['D', 'A', 'D', 'G', 'B', 'E']
 }
-
-if __name__ == "__main__":
-    print(guitar_tunings)
