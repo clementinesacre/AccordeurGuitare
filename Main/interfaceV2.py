@@ -30,6 +30,8 @@ def startFunctionAutomatic():
 
 def callbackAutomatic(indata, frames, time, status):
     """Callback function of the function that records by automatically finding the note to reach."""
+    global limit
+    
     if status:
         print(status)
     if any(indata[:, 0]):
@@ -72,6 +74,8 @@ def startFunctionManual(freq):
 
 def callbackManual(indata, frames, time, status):
     """Callback function of the function that records by finding manually the note to reach."""
+    global limit
+    
     if status:
         print(status)
     if any(indata[:, 0]):
