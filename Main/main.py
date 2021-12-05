@@ -1,12 +1,12 @@
 import tkinter as tk
 from tkinter import *
 from PIL import ImageTk
-from AccordeurGuitare.Main import accords_guitare
-from AccordeurGuitare.Main import find_note
-from AccordeurGuitare.Main.variables import *
-# import accords_guitare
-# import find_note
-# from variables import *
+# from AccordeurGuitare.Main import accords_guitare
+# from AccordeurGuitare.Main import find_note
+# from AccordeurGuitare.Main.variables import *
+import accords_guitare
+import find_note
+from variables import *
 import time
 from threading import *
 import numpy as np
@@ -298,10 +298,13 @@ class ButtonNotes:
         self.button.place(x=pos_x, y=pos_y)
 
     def chooseNote(self):
+        buttonSave.changeParam("Start", "green")
+
         if flag2:
-            buttonSave.changeParam("Start", "green")
+            self.setColor(buttonColor)
         else:
-            pass
+            self.setColor('blue')
+            
         startFunctionManual(self.note)
 
 
@@ -309,6 +312,11 @@ class ButtonNotes:
         self.note = newNote
         self.text = newText
         self.button['text'] = newText
+
+
+    def setColor(self, newColor):
+        self.color = newColor
+        self.button['bg'] = self.color
 
 
 
