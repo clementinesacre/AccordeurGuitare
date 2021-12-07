@@ -1,4 +1,4 @@
-buttonColor = "#9d9d9d"
+buttonColor = "#b5b5b5"
 widthInterface = 1200
 heightInterface = 800
 widthCanvas = 1200

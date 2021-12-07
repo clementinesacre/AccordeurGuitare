@@ -32,7 +32,7 @@ def startFunctionAutomatic():
     # if the automatic recorder thread is going to start
     if flag:
         # change the start button to a stop button
-        buttonSave.changeParam("Stop", "red")
+        buttonSave.changeParam("Stop", "#9d3333")
 
         # make sure all the other buttons are not highlighted
         for button in buttons_note:
@@ -78,9 +78,10 @@ def callbackAutomatic(indata, frames, time, status):
 
 def automaticRecord():
     """Record by automatically finding the note to reach."""
-    with sd.InputStream(channels=1, callback=callbackAutomatic, blocksize=int(size_sample), samplerate=fs):
+    with sd.InputStream(samplerate=fs, channels=2, callback=callbackAutomatic, blocksize=int(size_sample), device=2):
         while flag:
-            time.sleep(0.01)
+            time.sleep(1)
+    print(sd.query_devices(device=None, kind=None))
 
 
 def startFunctionManual(freq, noteText):
@@ -142,7 +143,7 @@ def moveFrq():
     """Move the pointer."""
     while True:
         pointer.move()
-        time.sleep(0.01)
+        time.sleep(0.02)
 
 
 def setTunings():
@@ -259,7 +260,7 @@ class ButtonTunings:
             e.setColor(buttonColor)
 
         # highlight the clicked button
-        self.setColor('blue')
+        self.setColor('#446cac')
 
         buttonSave.tune = self.text
         tuning_pitches = find_note.guitar_tune_frequencies(self.text)
@@ -278,7 +279,7 @@ class ButtonTunings:
 
 class ButtonRecord:
     def __init__(self, master, text, pos_x, pos_y, width):
-        self.color = "green"
+        self.color = "#338235"
         self.width = width
         self.pos_x = pos_x
         self.pos_y = pos_y
@@ -295,7 +296,7 @@ class ButtonRecord:
 
 class ButtonNotes:
     def __init__(self, master, text, pos_x, pos_y, note, width):
-        self.color = buttonColor
+        self.color = "#338235"
         self.selected = False
         self.dict = ()
         self.targetFreq = 0
@@ -310,7 +311,7 @@ class ButtonNotes:
 
     def chooseNote(self):
         global flag2
-        buttonSave.changeParam("Start", "green")
+        buttonSave.changeParam("Start", "#338235")
 
         # if the button is selected (meaning the user wants to unselect it)...
         if self.selected:
@@ -320,16 +321,16 @@ class ButtonNotes:
             flag2 = False
 
             # ...reset its color
-            self.setColor(buttonColor)
+            self.setColor("#338235")
         else:
             flag2 = False
 
             for button in buttons_note:
-                button.setColor(buttonColor)
+                button.setColor("#338235")
                 button.selected = False
 
             # otherwise, highlight that button
-            self.setColor('blue')
+            self.setColor('#9d3333')
             startFunctionManual(self.note, self.text)
             self.selected = True
 
@@ -356,20 +357,20 @@ class Values:
         self.actualText = 0
         self.targetText = 0
 
-        self.actualCanvas = Canvas(canvas2, width=100, height=30, bg="#ba8030")
-        self.actualFrequency = self.actualCanvas.create_text(50, 20, text=self.actualText, fill="black",
+        self.actualCanvas = Canvas(canvas2, width=200, height=30, bg="#ba8030")
+        self.actualFrequency = self.actualCanvas.create_text(100, 20, text="Actual : " + str(self.actualText) + "Hz", fill="black",
                                                              font='Helvetica 15 bold')
         self.actualCanvas.pack()
 
-        self.targetCanvas = Canvas(canvas2, width=100, height=30, bg="#306aba")
-        self.targetFrequency = self.targetCanvas.create_text(50, 20, text=self.targetText, fill="black",
+        self.targetCanvas = Canvas(canvas2, width=200, height=30, bg="#306aba")
+        self.targetFrequency = self.targetCanvas.create_text(100, 20, text="Target : " + str(self.targetText) + "Hz", fill="black",
                                                              font='Helvetica 15 bold')
         self.targetCanvas.pack()
 
     def change(self, actual, target):
         """Change the values of the displayed frequencies."""
-        self.actualText = actual
-        self.targetText = target
+        self.actualText = "Actual : " + str(actual) + "Hz"
+        self.targetText = "Target : " + str(target) + "Hz"
         self.actualCanvas.itemconfig(self.actualFrequency, text=self.actualText)
         self.targetCanvas.itemconfig(self.targetFrequency, text=self.targetText)
 
@@ -380,7 +381,6 @@ canvas = Canvas(root, bg="#000000", width=widthCanvas, height=heightCanvas)
 scale = Scale(canvas)
 values = Values(root)
 pointer = Pointer(canvas)
-
 
 # attributing each object with its class
 
