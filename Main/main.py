@@ -80,7 +80,7 @@ def automaticRecord():
     """Record by automatically finding the note to reach."""
     with sd.InputStream(samplerate=fs, channels=2, callback=callbackAutomatic, blocksize=int(size_sample), device=2):
         while flag:
-            time.sleep(1)
+            time.sleep(0.05)
     #print(sd.query_devices(device=None, kind=None))
 
 
@@ -136,14 +136,14 @@ def manualRecord():
     """Record by manually choosing the note to reach."""
     with sd.InputStream(channels=1, device=2, callback=callbackManual, blocksize=int(size_sample), samplerate=fs):
         while flag2:
-            time.sleep(1)
+            time.sleep(0.05)
 
 
 def moveFrq():
     """Move the pointer."""
     while True:
         pointer.move()
-        time.sleep(0.02)
+        time.sleep(0.01)
 
 
 def setTunings():
@@ -204,7 +204,7 @@ class Pointer:
             listE.append(self.pos_x1 + j)
 
         # if the pointer is at one end and il wants to go further to that same end...
-        if (((self.pos_x1 >= widthCanvas - self.size) and self.target_freq > self.pos_x1) or
+        if (((self.pos_x1 >= widthCanvas - 5) and self.target_freq > self.pos_x1) or
                 (0 >= self.pos_x1 > self.target_freq)):
             # ...do nothing
             pass
@@ -296,7 +296,7 @@ class ButtonRecord:
 
 class ButtonNotes:
     def __init__(self, master, text, pos_x, pos_y, note, width):
-        self.color = "#338235"
+        self.color = buttonColor
         self.selected = False
         self.dict = ()
         self.targetFreq = 0
@@ -321,12 +321,12 @@ class ButtonNotes:
             flag2 = False
 
             # ...reset its color
-            self.setColor("#338235")
+            self.setColor(buttonColor)
         else:
             flag2 = False
 
             for button in buttons_note:
-                button.setColor("#338235")
+                button.setColor(buttonColor)
                 button.selected = False
 
             # otherwise, highlight that button
