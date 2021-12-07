@@ -81,7 +81,7 @@ def automaticRecord():
     with sd.InputStream(samplerate=fs, channels=2, callback=callbackAutomatic, blocksize=int(size_sample), device=2):
         while flag:
             time.sleep(1)
-    print(sd.query_devices(device=None, kind=None))
+    #print(sd.query_devices(device=None, kind=None))
 
 
 def startFunctionManual(freq, noteText):
@@ -134,9 +134,9 @@ def callbackManual(indata, frames, time, status):
 
 def manualRecord():
     """Record by manually choosing the note to reach."""
-    with sd.InputStream(channels=1, callback=callbackManual, blocksize=int(size_sample), samplerate=fs):
+    with sd.InputStream(channels=1, device=2, callback=callbackManual, blocksize=int(size_sample), samplerate=fs):
         while flag2:
-            time.sleep(0.01)
+            time.sleep(1)
 
 
 def moveFrq():
