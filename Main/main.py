@@ -15,6 +15,15 @@ import sounddevice as sd
 from PIL import ImageTk, Image
 
 
+def dataToFrequency(data) :
+    values = data - np.mean(data)
+    spectrum = rfft(values)
+    positiveSpectrum = abs(spectrum)
+    maxFrequency = argmax(positiveSpectrum)
+    
+    return maxFrequency
+
+
 def startFunctionAutomatic():
     """
     Manage multithreading, by running the function that reaches a note automatically,
@@ -55,7 +64,7 @@ def callbackAutomatic(indata, frames, time, status):
     global limit
 
     if any(indata[:, 0]):
-        frequency = argmax(abs(rfft(indata[:, 0] - np.mean(indata[:, 0]))))
+        frequency = dataToFrequency(indata[:, 0])
         dico = find_note.get_target_note(frequency, selectedTune)
         targetFreq = dico["target_frequency"]
 
@@ -116,13 +125,13 @@ def callbackManual(indata, frames, time, status):
     global limit
 
     if any(indata[:, 0]):
-        frequence = argmax(abs(rfft(indata[:, 0] - np.mean(indata[:, 0]))))
+        frequency = dataToFrequency(indata[:, 0])
         targetFreq = freqRef
 
-        values.change(frequence, targetFreq)
+        values.change(frequency, targetFreq)
         scale.changeScale(centeredNote)
         limit = widthCanvas / (targetFreq * 2)
-        pointer.changeTargetF(frequence)
+        pointer.changeTargetF(frequency)
 
         # print("frequence a atteindre manuellement : ", targetFreq)
         # print("frequence actuelle : ", frequence)
