@@ -33,11 +33,12 @@ def startFunctionAutomatic():
     global flag
     global flag2
 
-    # toggle the automatic flag
-    flag = not flag
-
     # stop the manual thread
     flag2 = False
+    time.sleep(0.02)
+
+    # toggle the automatic flag
+    flag = not flag
 
     # if the automatic recorder thread is going to start
     if flag:
@@ -106,6 +107,7 @@ def startFunctionManual(freq, noteText):
 
     # stop the automatic thread
     flag = False
+    time.sleep(0.02)
 
     # toggle the manual thread state
     flag2 = not flag2
@@ -330,13 +332,11 @@ class ButtonNotes:
 
             # stop the record
             flag2 = False
-            time.sleep(0.05)
 
             # ...reset its color
             self.setColor(buttonColor)
         else:
             flag2 = False
-            time.sleep(0.05)
 
             for button in buttons_note:
                 button.setColor(buttonColor)
