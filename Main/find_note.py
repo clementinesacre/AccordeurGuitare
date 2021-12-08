@@ -72,12 +72,9 @@ def find_tuning_frequencies(tune="standard"):
     # to obtain the frequency of the searched tuning set's note
     for i in range(6):
         guitar_tuning_pitches.append(
-            accords_guitare.guitar_tunings["standard_indexes"][i] - (
-                    accords_guitare.guitar_tunings["standard_indexes"][i] -
-                    round(
-                        accords_guitare.guitar_tunings["standard_indexes"][i] * 2 ** (
-                                accords_guitare.guitar_tunings[tune][i][1] / 12), 2
-                    )
+            round(
+                accords_guitare.guitar_tunings["standard_indexes"][i] * 2 ** (
+                        accords_guitare.guitar_tunings[tune][i][1] / 12), 2
             )
         )
 
