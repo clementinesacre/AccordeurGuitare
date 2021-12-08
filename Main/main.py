@@ -1,11 +1,11 @@
 import tkinter as tk
 from tkinter import *
-# from AccordeurGuitare.Main import accords_guitare
-# from AccordeurGuitare.Main import find_note
-# from AccordeurGuitare.Main.variables import *
-import accords_guitare
-import find_note
-from variables import *
+from AccordeurGuitare.Main import accords_guitare
+from AccordeurGuitare.Main import find_note
+from AccordeurGuitare.Main.variables import *
+# import accords_guitare
+# import find_note
+# from variables import *
 import time
 from threading import *
 from numpy.fft import rfft
