@@ -22,7 +22,7 @@ def dataToFrequency(data) :
     positiveSpectrum[0] = 0 #suppression of the mean that stand at the 0 frequency
     maxFrequency = argmax(positiveSpectrum)
     
-    return maxFrequency
+    return maxFrequency* fs/size_sample
 
 
 def startFunctionAutomatic():
