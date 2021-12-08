@@ -16,9 +16,10 @@ from PIL import ImageTk, Image
 
 
 def dataToFrequency(data) :
-    values = data - np.mean(data)
+    values = data
     spectrum = rfft(values)
     positiveSpectrum = abs(spectrum)
+    positiveSpectrum[0] = 0 #suppression of the mean that stand at the 0 frequency
     maxFrequency = argmax(positiveSpectrum)
     
     return maxFrequency
