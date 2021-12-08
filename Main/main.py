@@ -1,11 +1,11 @@
 import tkinter as tk
 from tkinter import *
-from AccordeurGuitare.Main import accords_guitare
-from AccordeurGuitare.Main import find_note
-from AccordeurGuitare.Main.variables import *
-# import accords_guitare
-# import find_note
-# from variables import *
+# from AccordeurGuitare.Main import accords_guitare
+# from AccordeurGuitare.Main import find_note
+# from AccordeurGuitare.Main.variables import *
+import accords_guitare
+import find_note
+from variables import *
 import time
 from threading import *
 import numpy as np
@@ -150,8 +150,9 @@ def manualRecord():
 
 
 def moveFrq():
+    global flag, flag2
     """Move the pointer."""
-    while True:
+    while flag or flag2:
         pointer.move()
         time.sleep(0.01)
 
@@ -329,11 +330,13 @@ class ButtonNotes:
 
             # stop the record
             flag2 = False
+            time.sleep(0.05)
 
             # ...reset its color
             self.setColor(buttonColor)
         else:
             flag2 = False
+            time.sleep(0.05)
 
             for button in buttons_note:
                 button.setColor(buttonColor)
