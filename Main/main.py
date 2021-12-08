@@ -8,21 +8,20 @@ import find_note
 from variables import *
 import time
 from threading import *
-import numpy as np
 from numpy.fft import rfft
 from numpy import argmax
 import sounddevice as sd
 from PIL import ImageTk, Image
 
 
-def dataToFrequency(data) :
+def dataToFrequency(data):
     values = data
     spectrum = rfft(values)
     positiveSpectrum = abs(spectrum)
-    positiveSpectrum[0] = 0 #suppression of the mean that stand at the 0 frequency
+    positiveSpectrum[0] = 0  # suppression of the mean that stand at the 0 frequency
     maxFrequency = argmax(positiveSpectrum)
-    
-    return maxFrequency* fs/size_sample
+
+    return maxFrequency * fs / size_sample
 
 
 def startFunctionAutomatic():
@@ -92,7 +91,7 @@ def automaticRecord():
     with sd.InputStream(samplerate=fs, channels=1, callback=callbackAutomatic, blocksize=int(size_sample)):
         while flag:
             time.sleep(0.05)
-    #print(sd.query_devices(device=None, kind=None))
+    # print(sd.query_devices(device=None, kind=None))
 
 
 def startFunctionManual(freq, noteText):
@@ -115,7 +114,6 @@ def startFunctionManual(freq, noteText):
 
     # set the target note var to the text of the clicked button
     centeredNote = noteText
-
     # start all needed threads
     t1 = Thread(target=manualRecord)
     t2 = Thread(target=moveFrq)
@@ -371,12 +369,14 @@ class Values:
         self.targetText = 0
 
         self.actualCanvas = Canvas(canvas2, width=200, height=30, bg="#ba8030")
-        self.actualFrequency = self.actualCanvas.create_text(100, 20, text="Actual : " + str(self.actualText) + "Hz", fill="black",
+        self.actualFrequency = self.actualCanvas.create_text(100, 20, text="Actual : " + str(self.actualText) + "Hz",
+                                                             fill="black",
                                                              font='Helvetica 15 bold')
         self.actualCanvas.pack()
 
         self.targetCanvas = Canvas(canvas2, width=200, height=30, bg="#306aba")
-        self.targetFrequency = self.targetCanvas.create_text(100, 20, text="Target : " + str(self.targetText) + "Hz", fill="black",
+        self.targetFrequency = self.targetCanvas.create_text(100, 20, text="Target : " + str(self.targetText) + "Hz",
+                                                             fill="black",
                                                              font='Helvetica 15 bold')
         self.targetCanvas.pack()
 
